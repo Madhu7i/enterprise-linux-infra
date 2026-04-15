@@ -22,7 +22,7 @@ It simulates real-world system administration tasks including:
 
 ## 🏗️ Architecture
 
-c:\Users\anumu\Pictures\Screenshots\Screenshot 2026-04-14 190957.png
+![alt text](<Screenshot 2026-04-14 190957.png>)
 ---
 
 ## 🖥️ Infrastructure Components
