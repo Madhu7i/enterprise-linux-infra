@@ -1,0 +1,282 @@
+ENTERPRISE LINUX INFRASTRUCTURE PROJECT
+DETAILED DEPLOYMENT GUIDE
+
+----------------------------------------
+1. OVERVIEW
+----------------------------------------
+This guide explains how to recreate a multi-server Linux environment using Rocky Linux on VMware.
+
+Servers included:
+- Web Server (Nginx)
+- File Server (NFS + Samba)
+- Monitor Server (Logging + Audit)
+- Client Machine
+
+----------------------------------------
+2. REQUIREMENTS
+----------------------------------------
+Hardware:
+- Minimum 16 GB RAM
+- 100 GB free disk space
+
+Software:
+- VMware Workstation Pro
+- Rocky Linux Minimal ISO
+
+----------------------------------------
+3. CREATE BASE VIRTUAL MACHINE
+----------------------------------------
+
+1. Open VMware Workstation
+2. Click "Create New Virtual Machine"
+3. Select "Typical"
+4. Choose Rocky Linux ISO
+5. Name VM: base-template
+6. Assign:
+   - RAM: 2 GB
+   - CPU: 2 cores
+   - Disk: 20 GB
+7. Network: NAT
+
+----------------------------------------
+4. INSTALL ROCKY LINUX
+----------------------------------------
+
+1. Start VM
+2. Select "Install Rocky Linux"
+3. Choose:
+   - Language: English
+4. Installation Settings:
+   - Software: Minimal Install
+   - Set root password
+   - Create user: madhuadmin
+5. Click "Begin Installation"
+6. Reboot after installation
+
+----------------------------------------
+5. INITIAL SYSTEM SETUP
+----------------------------------------
+
+Login as root and run:
+
+dnf update -y
+dnf install -y vim wget curl net-tools bash-completion
+
+Enable SSH:
+systemctl enable sshd
+systemctl start sshd
+
+----------------------------------------
+6. CLONE MACHINES
+----------------------------------------
+
+Create 4 VMs from base-template:
+- web-server
+- file-server
+- monitor
+- client
+
+----------------------------------------
+7. SET HOSTNAMES
+----------------------------------------
+
+Run on each VM:
+
+Web Server:
+hostnamectl set-hostname web-server
+
+File Server:
+hostnamectl set-hostname file-server
+
+Monitor:
+hostnamectl set-hostname monitor
+
+Client:
+hostnamectl set-hostname client
+
+----------------------------------------
+8. CONFIGURE STATIC IP
+----------------------------------------
+
+Run on each machine:
+
+nmcli con show
+
+Modify connection:
+nmcli con mod "System eth0" ipv4.method manual
+nmcli con mod "System eth0" ipv4.addresses 192.168.182.X/24
+nmcli con mod "System eth0" ipv4.gateway 192.168.182.2
+nmcli con up "System eth0"
+
+Assign IPs:
+
+web-server   → 192.168.182.128
+file-server  → 192.168.182.129
+monitor      → 192.168.182.133
+client       → 192.168.182.134
+
+----------------------------------------
+9. INITIAL SSH CONNECTION (IMPORTANT)
+----------------------------------------
+
+Before hardening SSH, establish connection between machines and accept fingerprints.
+
+From CLIENT machine:
+
+ssh madhuadmin@192.168.182.128
+ssh madhuadmin@192.168.182.129
+ssh madhuadmin@192.168.182.133
+
+Type "yes" when prompted to accept fingerprint.
+
+This ensures trust between systems before changing SSH port.
+
+----------------------------------------
+10. SSH HARDENING (ALL SERVERS)
+----------------------------------------
+
+Edit:
+vim /etc/ssh/sshd_config
+
+Change:
+PermitRootLogin no
+Port 2222
+PasswordAuthentication no
+
+Restart:
+systemctl restart sshd
+
+----------------------------------------
+11. FIREWALL CONFIGURATION
+----------------------------------------
+
+systemctl enable firewalld
+systemctl start firewalld
+
+Allow SSH:
+firewall-cmd --permanent --add-port=2222/tcp
+firewall-cmd --reload
+
+----------------------------------------
+12. WEB SERVER SETUP (WEB SERVER ONLY)
+----------------------------------------
+
+dnf install -y nginx
+systemctl enable nginx
+systemctl start nginx
+
+Create site:
+mkdir -p /var/www/site1
+echo "Hello from Web Server" > /var/www/site1/index.html
+
+----------------------------------------
+13. FILE SERVER SETUP (FILE SERVER ONLY)
+----------------------------------------
+
+dnf install -y nfs-utils samba
+
+Create directories:
+mkdir -p /srv/shared/dev
+
+Start services:
+systemctl enable nfs-server smb
+systemctl start nfs-server smb
+
+----------------------------------------
+14. MONITOR SERVER SETUP
+----------------------------------------
+
+dnf install -y rsyslog audit
+
+Enable services:
+systemctl enable rsyslog auditd
+systemctl start rsyslog auditd
+
+----------------------------------------
+15. AUTOMATION SCRIPTS
+----------------------------------------
+
+Create backup script:
+
+vim /usr/local/bin/backup_web.sh
+
+#!/bin/bash
+tar -czf /backup/web_$(date +%F).tar.gz /var/www
+
+Make executable:
+chmod +x /usr/local/bin/backup_web.sh
+
+Schedule:
+crontab -e
+
+0 2 * * * /usr/local/bin/backup_web.sh
+
+----------------------------------------
+16. LOGGING CONFIGURATION
+----------------------------------------
+
+Edit:
+vim /etc/rsyslog.conf
+
+Add:
+*.* @192.168.182.133:514
+
+Restart:
+systemctl restart rsyslog
+
+----------------------------------------
+17. AUDIT RULES
+----------------------------------------
+
+Edit:
+vim /etc/audit/rules.d/custom.rules
+
+Add:
+-w /etc/passwd -p wa -k user_changes
+-w /etc/shadow -p wa -k password_changes
+
+Load rules:
+augenrules --load
+
+----------------------------------------
+18. AWS BACKUP (OPTIONAL)
+----------------------------------------
+
+Use rsync:
+
+rsync -avz /backup ec2-user@<EC2-IP>:/cloud-backup/
+
+----------------------------------------
+19. TESTING
+----------------------------------------
+
+Test SSH:
+ssh -p 2222 madhuadmin@192.168.182.128
+
+Test Web:
+curl http://192.168.182.128
+
+Test File Server:
+mount -t nfs 192.168.182.129:/srv/shared/dev /mnt
+
+----------------------------------------
+20. STARTUP ORDER
+----------------------------------------
+
+1. Start monitor server
+2. Start file server
+3. Start web server
+4. Start client machine
+
+----------------------------------------
+21. NOTES
+----------------------------------------
+
+- Ensure all machines are on same network
+- Use correct IP addresses
+- Always restart services after changes
+- Verify using systemctl status
+
+----------------------------------------
+END OF GUIDE
+----------------------------------------

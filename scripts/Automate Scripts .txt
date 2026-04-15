@@ -1,0 +1,16 @@
+example ( Used in this Project):
+
+User Onboarding (file-server):
+crontab -e
+Add example (runs every Monday at 10 AM):
+0 10 * * 1 /usr/local/bin/create_user.sh newuser dev
+________________________________________
+Backup Web Server (web-server):
+crontab -e
+Add (daily at 2 AM):
+0 2 * * * /usr/local/bin/backup_web.sh
+________________________________________
+Health Check (monitor server):
+crontab -e
+Add (every hour):
+0 * * * * /usr/local/bin/health_check.sh

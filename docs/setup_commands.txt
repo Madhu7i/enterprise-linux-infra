@@ -1,0 +1,44 @@
+# SYSTEM SETUP
+dnf update -y
+hostnamectl set-hostname web-server
+
+# SSH HARDENING
+vim /etc/ssh/sshd_config
+PermitRootLogin no
+Port 2222
+PasswordAuthentication no
+systemctl restart sshd
+
+# FIREWALL
+systemctl enable firewalld
+firewall-cmd --permanent --add-port=2222/tcp
+firewall-cmd --reload
+
+# NGINX
+dnf install -y nginx
+systemctl enable nginx
+systemctl start nginx
+
+# FILE SERVER
+dnf install -y nfs-utils samba
+
+# SAMBA USERS
+smbpasswd -a madhuadmin
+
+# AUTOMATION
+crontab -e
+
+# BACKUP
+tar -czf backup.tar.gz /var/www
+
+# LOGGING
+vim /etc/rsyslog.conf
+systemctl restart rsyslog
+
+# AUDIT
+dnf install audit
+systemctl enable auditd
+auditctl -l
+
+# AWS BACKUP
+rsync -avz /backup/web ec2-user@<EC2-IP>:/cloud-backup/

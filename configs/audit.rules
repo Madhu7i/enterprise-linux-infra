@@ -1,0 +1,5 @@
+-w /etc/passwd -p wa -k user_changes
+
+-w /etc/shadow -p wa -k password_changes
+
+-w /var/log/secure -p wa -k auth_logs

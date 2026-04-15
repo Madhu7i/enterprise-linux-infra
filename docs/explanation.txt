@@ -1,0 +1,23 @@
+STEP 1: Created multiple virtual machines using VMware (web, file, monitor, client)
+
+STEP 2: Installed Rocky Linux minimal and configured static IP addresses
+
+STEP 3: Secured SSH by disabling root login, changing port, and enabling key authentication
+
+STEP 4: Configured firewall and SELinux for system security
+
+STEP 5: Installed and configured Nginx for hosting multiple websites
+
+STEP 6: Set up file server using NFS (Linux) and Samba (cross-platform)
+
+STEP 7: Created automation scripts for backup, monitoring, and user management
+
+STEP 8: Implemented centralized logging using rsyslog
+
+STEP 9: Enabled system auditing using auditd and file integrity monitoring using AIDE
+
+STEP 10: Integrated AWS EC2 for cloud backup using rsync over SSH
+
+STEP 11: Automated backups and monitoring using cron jobs
+
+This project simulates a real enterprise Linux infrastructure environment.
