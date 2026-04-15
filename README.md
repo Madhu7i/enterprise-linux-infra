@@ -22,19 +22,19 @@ It simulates real-world system administration tasks including:
 
 ## 🏗️ Architecture
 
+```
             Client (Rocky Linux)
                    |
              SSH (Port 2222)
                    |
------------------------------------------
-|                |                      |
-
-Web Server    File Server        Monitor Server
-(Nginx)       (NFS + Samba)      (Logs + Audit)
-|                |                      |
------------------------------------------
-|
-AWS EC2 (Cloud Backup)
+        ┌──────────┼──────────┐
+        |          |          |
+   Web Server  File Server  Monitor Server
+    (Nginx)   (NFS+Samba)  (Logs+Audit)
+        |
+    AWS EC2
+  (Cloud Backup)
+```
 
 
 ---
