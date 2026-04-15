@@ -100,7 +100,7 @@ Located in `/screenshots`:
 2. Create virtual machines using VMware
 3. Configure servers as per documentation
 4. Start in order:
-   - Monitor → File Server → Web Server → Client
+   - Web Server → File Server → Monitor → Client
 
 ---
 
