@@ -90,8 +90,7 @@ Located in `/screenshots`:
 - Web server output  
 - File sharing  
 - Central logs  
-- Audit rules  
-- AWS backup  
+- Audit rules 
 
 ---
 
