@@ -23,7 +23,7 @@ systemctl start nginx
 dnf install -y nfs-utils samba
 
 # SAMBA USERS
-smbpasswd -a madhuadmin
+smbpasswd -a admin
 
 # AUTOMATION
 crontab -e
