@@ -27,7 +27,7 @@ It simulates real-world system administration tasks including:
 
 ## 🖥️ Infrastructure Components
 
-| Server        | Role |
+| Server       | Role |
 |--------------|------|
 | Web Server   | Hosts websites using Nginx |
 | File Server  | Provides file sharing via NFS & Samba |
