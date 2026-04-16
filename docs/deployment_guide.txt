@@ -49,7 +49,7 @@ Software:
 4. Installation Settings:
    - Software: Minimal Install
    - Set root password
-   - Create user: madhuadmin
+   - Create user: admin
 5. Click "Begin Installation"
 6. Reboot after installation
 
@@ -123,9 +123,9 @@ Before hardening SSH, establish connection between machines and accept fingerpri
 
 From CLIENT machine:
 
-ssh madhuadmin@192.168.182.128
-ssh madhuadmin@192.168.182.129
-ssh madhuadmin@192.168.182.133
+ssh admin@192.168.182.128
+ssh admin@192.168.182.129
+ssh admin@192.168.182.133
 
 Type "yes" when prompted to accept fingerprint.
 
@@ -251,7 +251,7 @@ rsync -avz /backup ec2-user@<EC2-IP>:/cloud-backup/
 ----------------------------------------
 
 Test SSH:
-ssh -p 2222 madhuadmin@192.168.182.128
+ssh -p 2222 admin@192.168.182.128
 
 Test Web:
 curl http://192.168.182.128
