@@ -19,4 +19,7 @@ fi
 useradd -m -G $GROUPNAME $USERNAME
 echo "$USERNAME:ChangeMe123" | chpasswd
 
+# Force password change on first login
+passwd -e $USERNAME
+
 echo "User $USERNAME created and added to group $GROUPNAME"
